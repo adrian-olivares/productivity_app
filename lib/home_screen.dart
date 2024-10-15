@@ -1,8 +1,40 @@
+import 'dart:io';
+
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+import 'counter_storage.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key, required this.storage});
+
+  final CounterStorage storage;
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _counter = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.storage.readCounter().then((value) {
+      setState(() {
+        _counter = value;
+      });
+    });
+  }
+
+  Future<File> _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+
+    // Write the variable as a string to the file.
+    return widget.storage.writeCounter(_counter);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,6 +77,7 @@ class HomeScreen extends StatelessWidget {
       body: Center(
         child: Column(
           children: [
+            Text('Button tapped $_counter time${_counter == 1 ? '' : 's'}.'),
             Image.asset('assets/dash.png'),
             Text(
               'Welcome!',
@@ -53,6 +86,11 @@ class HomeScreen extends StatelessWidget {
             const SignOutButton(),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _incrementCounter,
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
       ),
     );
   }
