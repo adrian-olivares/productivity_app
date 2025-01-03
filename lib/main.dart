@@ -1,9 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:productivity_app/firebase_options.dart';
-//import 'dart:async';
-//import 'dart:io';
-//import 'package:path_provider/path_provider.dart';
 
 import 'auth_gate.dart';
 

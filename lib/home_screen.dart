@@ -2,13 +2,17 @@ import 'dart:io';
 
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
-
-import 'counter_storage.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:productivity_app/counter_storage.dart';
+import 'package:productivity_app/json_storage.dart';
+import 'package:productivity_app/models/plan.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.storage});
+  const HomeScreen(
+      {super.key, required this.storage, required this.jsonStorage});
 
   final CounterStorage storage;
+  final JsonStorage jsonStorage;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -16,6 +20,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _counter = 0;
+  Plan _plan = Plan(name: 'No Plan', description: 'No description');
 
   @override
   void initState() {
@@ -25,15 +30,34 @@ class _HomeScreenState extends State<HomeScreen> {
         _counter = value;
       });
     });
+    widget.jsonStorage.readJsonFile().then((value) {
+      setState(() {
+        _plan = Plan.fromJson(value);
+      });
+    });
   }
 
-  Future<File> _incrementCounter() {
+  Future<File> _incrementCounter() async {
+    final appDocDir = await getApplicationDocumentsDirectory();
+    final appDocPath = appDocDir.path;
+    print('App Documents Directory: $appDocPath');
     setState(() {
       _counter++;
+      /*_plan = Plan(
+          name: 'nom nou',
+          description:
+              'Button tapped $_counter time${_counter == 1 ? '' : 's'}.');*/
     });
 
     // Write the variable as a string to the file.
     return widget.storage.writeCounter(_counter);
+  }
+
+  Future<Plan> updateCard(String name, String description) async {
+    setState(() {
+      _plan = Plan(name: name, description: description);
+    });
+    return widget.jsonStorage.writeJsonFile(_plan.name, _plan.description);
   }
 
   @override
@@ -77,11 +101,27 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Center(
         child: Column(
           children: [
-            Text('Button tapped $_counter time${_counter == 1 ? '' : 's'}.'),
-            Image.asset('assets/dash.png'),
             Text(
               'Welcome!',
               style: Theme.of(context).textTheme.displaySmall,
+            ),
+            Text('Button tapped $_counter time${_counter == 1 ? '' : 's'}.'),
+            TextButton(
+              onPressed: () async {
+                final tempDir = await getTemporaryDirectory();
+                final tempDirPath = tempDir.path;
+                print(tempDirPath);
+              },
+              child: const Text('Temp file dir here'),
+            ),
+            //Image.asset('assets/dash.png'),
+            const Text('Available plans:'),
+            CardPlan(
+              title: _plan.name,
+              description: _plan.description,
+            ),
+            NewCard(
+              function: () => updateCard(_plan.name, _plan.description),
             ),
             const SignOutButton(),
           ],
@@ -95,3 +135,132 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
+
+class CardPlan extends StatelessWidget {
+  final String title;
+  final String description;
+
+  CardPlan({required this.title, required this.description});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Card(
+        margin: const EdgeInsets.all(16),
+        child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+          ListTile(
+            leading: const Icon(Icons.event),
+            title: Text(title),
+            subtitle: Text(description),
+          ),
+          const SizedBox(width: 8),
+        ]),
+      ),
+    );
+  }
+}
+
+class NewCard extends StatefulWidget {
+  final Function(String name, String description) function;
+  const NewCard({super.key, required this.function});
+
+  @override
+  State<NewCard> createState() => _NewCardState();
+}
+
+class _NewCardState extends State<NewCard> {
+  final myTextFieldController = TextEditingController();
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    myTextFieldController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Card(
+        margin: const EdgeInsets.all(16),
+        child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+          ListTile(
+            leading: const Icon(Icons.event),
+            title: TextField(
+              controller: myTextFieldController,
+              decoration: const InputDecoration(
+                //border: OutlineInputBorder(),
+                hintText: 'Enter a title',
+              ),
+            ),
+            subtitle: const TextField(
+              decoration: InputDecoration(
+                //border: OutlineInputBorder(),
+                hintText: 'Enter a description',
+              ),
+            ),
+            //trailing: const Icon(Icons.check),
+            trailing: FloatingActionButton(
+              onPressed: //() {
+                  //_updateCard;
+                  /*showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      content: Text(myTextFieldController.text),
+                    );
+                  },
+                );*/
+                  //}
+                  widget.function(myTextFieldController.text, 'description'),
+              tooltip: 'Create plan!',
+              child: const Icon(Icons.check),
+            ),
+          ),
+          const SizedBox(width: 8),
+        ]),
+      ),
+    );
+  }
+}
+
+/*class CardPlan2 extends StatelessWidget {
+  final String title;
+  final String description;
+
+  // Constructor accepting title and description arguments
+  CardPlan2({required this.title, required this.description});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4, // adds shadow to the card
+      margin: EdgeInsets.all(16), // adds margin around the card
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Title of the card
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(
+                height: 8), // Adds space between title and description
+            // Description of the card
+            Text(
+              description,
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey[700],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}*/
