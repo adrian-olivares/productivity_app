@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:productivity_app/pages/plan_crud_page.dart';
 
 class PlansPage extends StatelessWidget {
   const PlansPage({super.key});
@@ -18,6 +19,15 @@ class PlansPage extends StatelessWidget {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add),
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const CRUDPlanPage()),
+          );
+        },
       ),
     );
   }
