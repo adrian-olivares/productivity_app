@@ -6,6 +6,7 @@ import 'package:productivity_app/models/plan.dart';
 class JsonStorage {
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
+    //print(directory.path.toString());
 
     return directory.path;
   }
@@ -15,20 +16,23 @@ class JsonStorage {
     return File('$path/plans.json');
   }
 
-  Future<Map<String, dynamic>> readJsonFile() async {
+  Future<List<Plan>> loadPlans() async {
     final file = await _localJsonFile;
-    final contents = await file.readAsString();
-    //print(contents);
+    final response = await file.readAsString();
+    final List<dynamic> data = jsonDecode(response);
 
-    return json.decode(contents);
+    print(response);
+
+    return data.map((json) => Plan.fromJson(json)).toList();
   }
 
-  Future<Plan> writeJsonFile(String title, String description) async {
-    final Plan plan = Plan(name: title, description: description);
-
+  Future<void> writePlans(List<Plan> plans) async {
     final file = await _localJsonFile;
-    await file.writeAsString(json.encode(plan));
-    print(plan);
-    return plan;
+    final jsonData = plans.map((plan) => plan.toJson()).toList();
+    final jsonString = jsonEncode(jsonData);
+
+    await file.writeAsString(jsonString);
+    print('saving:');
+    print(jsonString);
   }
 }

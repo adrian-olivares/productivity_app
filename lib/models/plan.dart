@@ -5,10 +5,17 @@ class Plan {
 
   Plan({required this.name, this.description = '', this.duration = 1});
 
-  Plan.fromJson(Map<String, dynamic> json)
-      : name = json['name'],
+  factory Plan.fromJson(Map<String, dynamic> json)
+  /*: name = json['name'],
         description = json['description'],
-        duration = json['duration'];
+        duration = json['duration'];*/
+  {
+    return Plan(
+      name: json['name'],
+      description: json['description'],
+      duration: json['duration'],
+    );
+  }
 
   Map<String, dynamic> toJson() {
     return {
