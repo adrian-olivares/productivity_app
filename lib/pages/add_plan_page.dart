@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:productivity_app/models/plan.dart';
 
-class CRUDPlanPage extends StatefulWidget {
-  const CRUDPlanPage({super.key});
+class AddPlanPage extends StatefulWidget {
+  const AddPlanPage({super.key});
 
   @override
-  State<CRUDPlanPage> createState() => _CRUDPlanPageState();
+  State<AddPlanPage> createState() => _AddPlanPageState();
 }
 
-class _CRUDPlanPageState extends State<CRUDPlanPage> {
+class _AddPlanPageState extends State<AddPlanPage> {
   //final GlobalKey<CRUDFormState> _formKey = GlobalKey<CRUDFormState>();
 
   @override
@@ -19,24 +20,11 @@ class _CRUDPlanPageState extends State<CRUDPlanPage> {
       body: const Center(
         child: Column(
           children: [
-            Text(
+            /*Text(
               'You are on the Page to edit or create a plan!',
               style: TextStyle(fontSize: 24),
-            ),
-            CRUDForm(),
-            /*FloatingActionButton(
-              child: Icon(Icons.check),
-              onPressed: () {
-                // Validate returns true if the form is valid, or false otherwise.
-                if (_formKey.currentState!.validate()) {
-                  // If the form is valid, display a snackbar. In the real world,
-                  // you'd often call a server or save the information in a database.
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Processing Data')),
-                  );
-                }
-              },
             ),*/
+            CRUDForm(),
           ],
         ),
       ),
@@ -55,6 +43,11 @@ class CRUDForm extends StatefulWidget {
 
 class CRUDFormState extends State<CRUDForm> {
   final _formKey = GlobalKey<FormState>();
+
+  String _formTitle = '';
+  String _formDescription = '';
+  String _formDuration = '15min';
+
   bool validateForm() {
     if (_formKey.currentState?.validate() ?? false) {
       return true; // Form is valid
@@ -72,12 +65,47 @@ class CRUDFormState extends State<CRUDForm> {
           //crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFormField(
+              maxLength: 50,
+              decoration:
+                  const InputDecoration(label: Text('Title of the plan')),
               // The validator receives the text that the user has entered.
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter some text';
                 }
                 return null;
+              },
+              onSaved: (value) {
+                _formTitle = value!;
+              },
+            ),
+            TextFormField(
+              //maxLength: 50,
+              decoration: const InputDecoration(label: Text('Desciption')),
+              // The validator receives the text that the user has entered.
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return 'Please enter some text';
+                }
+                return null;
+              },
+              onSaved: (value) {
+                _formDescription = value!;
+              },
+            ),
+            DropdownButtonFormField(
+              value: _formDuration,
+              decoration: const InputDecoration(
+                label: Text('Duration'),
+              ),
+              items: ['15min', '30min', '1hour']
+                  .map((option) => DropdownMenuItem(
+                        value: option,
+                        child: Text(option),
+                      ))
+                  .toList(),
+              onChanged: (value) {
+                _formDuration = value!;
               },
             ),
             const Padding(
@@ -88,10 +116,14 @@ class CRUDFormState extends State<CRUDForm> {
               child: FloatingActionButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    // If the form is valid, display a snackbar. In the real world,
-                    // you'd often call a server or save the information in a database.
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Processing Data')),
+                    _formKey.currentState!.save();
+                    Navigator.pop(
+                      context,
+                      Plan(
+                        name: _formTitle,
+                        description: _formDescription,
+                        //duration: _formDuration), TODO
+                      ),
                     );
                   }
                 },

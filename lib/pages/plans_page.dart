@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:productivity_app/json_storage.dart';
 import 'package:productivity_app/models/plan.dart';
-import 'package:productivity_app/pages/plan_crud_page.dart';
+import 'package:productivity_app/pages/add_plan_page.dart';
 
 class PlansPage extends StatefulWidget {
   const PlansPage({super.key, required this.jsonStorage});
@@ -21,11 +21,6 @@ class _PlansPageState extends State<PlansPage> {
   @override
   void initState() {
     super.initState();
-    /*widget.jsonStorage.readJsonFile().then((value) {
-      setState(() {
-        allPlans = value.map((value) => Plan.fromJson(value)).toList();
-      });
-    });*/
     _loadPlans();
   }
 
@@ -33,6 +28,21 @@ class _PlansPageState extends State<PlansPage> {
     List<Plan> loadedPlans = await widget.jsonStorage.loadPlans();
     setState(() {
       allPlans = loadedPlans;
+    });
+  }
+
+  void _navigateToAddPlanPage() async {
+    Plan newPlan = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AddPlanPage()),
+    );
+
+    setState(() {
+      allPlans.add(newPlan);
+      widget.jsonStorage.writePlans(allPlans);
+      print(newPlan.name);
+      print(newPlan.description);
+      print(newPlan.duration);
     });
   }
 
@@ -66,12 +76,7 @@ class _PlansPageState extends State<PlansPage> {
       ),
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const CRUDPlanPage()),
-          );
-        },
+        onPressed: _navigateToAddPlanPage,
       ),
     );
   }

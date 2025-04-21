@@ -139,17 +139,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
             //Text('Button tapped $_counter time${_counter == 1 ? '' : 's'}.'),
 
-            /*TextButton(
-              onPressed: () async {
-                final tempDir = await getTemporaryDirectory();
-                final tempDirPath = tempDir.path;
-                print(tempDirPath);
-              },
-              child: const Text('Temp file dir here'),
-            ),*/
-            //Image.asset('assets/dash.png'),
-            //const Text('Active plans:'),
-
             ListView.builder(
               shrinkWrap: true,
               padding: const EdgeInsets.all(8),
@@ -189,12 +178,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      /*floatingActionButton: FloatingActionButton(
-        //onPressed: _incrementCounter,
-        onPressed: ,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ),*/
     );
   }
 }
