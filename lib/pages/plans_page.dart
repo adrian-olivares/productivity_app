@@ -46,6 +46,13 @@ class _PlansPageState extends State<PlansPage> {
     });
   }
 
+  void _deletePlan(int i) {
+    setState(() {
+      allPlans.removeAt(i);
+      widget.jsonStorage.writePlans(allPlans);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,6 +75,12 @@ class _PlansPageState extends State<PlansPage> {
                   leading: const Icon(Icons.event),
                   title: Text(allPlans[index].name),
                   subtitle: Text(allPlans[index].description),
+                  trailing: IconButton(
+                    onPressed: () {
+                      _deletePlan(index);
+                    },
+                    icon: const Icon(Icons.delete),
+                  ),
                 );
               },
             ),
@@ -75,8 +88,8 @@ class _PlansPageState extends State<PlansPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add),
         onPressed: _navigateToAddPlanPage,
+        child: const Icon(Icons.add),
       ),
     );
   }

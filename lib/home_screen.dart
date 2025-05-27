@@ -171,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           builder: (context) => PlansPage(
                                 jsonStorage: JsonStorage(),
                               )),
-                    );
+                    ).then((value) => _loadPlans());
                   },
                   icon: const Icon(Icons.calendar_month),
                 )),
