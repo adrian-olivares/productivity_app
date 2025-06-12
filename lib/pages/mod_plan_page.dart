@@ -1,30 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:productivity_app/models/plan.dart';
 
-class AddPlanPage extends StatefulWidget {
-  const AddPlanPage({super.key});
+class ModPlanPage extends StatefulWidget {
+  const ModPlanPage({super.key, required index, required this.plan});
+
+  final Plan plan;
 
   @override
-  State<AddPlanPage> createState() => _AddPlanPageState();
+  State<ModPlanPage> createState() => _ModPlanPageState();
 }
 
-class _AddPlanPageState extends State<AddPlanPage> {
+class _ModPlanPageState extends State<ModPlanPage> {
   //final GlobalKey<CRUDFormState> _formKey = GlobalKey<CRUDFormState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Plan Page'),
+        title: const Text('Mod Plan Page'),
       ),
-      body: const Center(
+      body: Center(
         child: Column(
           children: [
             /*Text(
               'You are on the Page to edit or create a plan!',
               style: TextStyle(fontSize: 24),
             ),*/
-            CRUDForm(),
+            CRUDForm(plan: widget.plan),
           ],
         ),
       ),
@@ -33,7 +35,8 @@ class _AddPlanPageState extends State<AddPlanPage> {
 }
 
 class CRUDForm extends StatefulWidget {
-  const CRUDForm({super.key});
+  const CRUDForm({super.key, required this.plan});
+  final Plan plan;
 
   @override
   CRUDFormState createState() {
@@ -44,9 +47,17 @@ class CRUDForm extends StatefulWidget {
 class CRUDFormState extends State<CRUDForm> {
   final _formKey = GlobalKey<FormState>();
 
-  String _formTitle = '';
-  String _formDescription = '';
-  String _formDuration = '15min';
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  String _formDuration = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    _titleController.text = widget.plan.name;
+    _descriptionController.text = widget.plan.description;
+  }
 
   bool validateForm() {
     if (_formKey.currentState?.validate() ?? false) {
@@ -65,35 +76,37 @@ class CRUDFormState extends State<CRUDForm> {
           //crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFormField(
+              controller: _titleController,
               maxLength: 50,
               decoration:
                   const InputDecoration(label: Text('Title of the plan')),
               // The validator receives the text that the user has entered.
-              validator: (value) {
+              /*validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter some text';
                 }
                 return null;
               },
               onSaved: (value) {
-                _formTitle = value!;
-              },
+                //_formTitle = value!;
+              },*/
             ),
             TextFormField(
+              controller: _descriptionController,
               //maxLength: 50,
               decoration: const InputDecoration(label: Text('Desciption')),
               // The validator receives the text that the user has entered.
-              validator: (value) {
+              /*validator: (value) {
                 if (value == null || value.isEmpty) {
                   return 'Please enter some text';
                 }
                 return null;
               },
               onSaved: (value) {
-                _formDescription = value!;
-              },
+                //_formDescription = value!;
+              },*/
             ),
-            DropdownButtonFormField(
+            /*DropdownButtonFormField(
               value: _formDuration,
               decoration: const InputDecoration(
                 label: Text('Duration'),
@@ -107,7 +120,7 @@ class CRUDFormState extends State<CRUDForm> {
               onChanged: (value) {
                 _formDuration = value!;
               },
-            ),
+            ),*/
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
             ),
@@ -115,17 +128,17 @@ class CRUDFormState extends State<CRUDForm> {
               alignment: Alignment.bottomRight,
               child: FloatingActionButton(
                 onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _formKey.currentState!.save();
-                    Navigator.pop(
-                      context,
-                      Plan(
-                        name: _formTitle,
-                        description: _formDescription,
-                        //duration: _formDuration), TODO
-                      ),
-                    );
-                  }
+                  //if (_formKey.currentState!.validate()) {
+                  //  _formKey.currentState!.save();
+                  Navigator.pop(
+                    context,
+                    Plan(
+                      name: _titleController.text.trim(),
+                      description: _descriptionController.text.trim(),
+                      //duration: _formDuration), TODO
+                    ),
+                  );
+                  //}
                 },
                 child: const Icon(Icons.check),
               ),

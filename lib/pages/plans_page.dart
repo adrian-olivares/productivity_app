@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:productivity_app/json_storage.dart';
 import 'package:productivity_app/models/plan.dart';
 import 'package:productivity_app/pages/add_plan_page.dart';
+import 'package:productivity_app/pages/mod_plan_page.dart';
 
 class PlansPage extends StatefulWidget {
   const PlansPage({super.key, required this.jsonStorage});
@@ -46,6 +47,22 @@ class _PlansPageState extends State<PlansPage> {
     });
   }
 
+  void _navigateToModPlanPage(int index, Plan plan) async {
+    Plan modedPlan = await Navigator.push(
+      context,
+      MaterialPageRoute(
+          builder: (context) => ModPlanPage(index: index, plan: plan)),
+    );
+
+    setState(() {
+      allPlans[index] = modedPlan;
+      widget.jsonStorage.writePlans(allPlans);
+      print(modedPlan.name);
+      print(modedPlan.description);
+      print(modedPlan.duration);
+    });
+  }
+
   void _deletePlan(int i) {
     setState(() {
       allPlans.removeAt(i);
@@ -72,6 +89,10 @@ class _PlansPageState extends State<PlansPage> {
               itemCount: allPlans.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(
+                  onTap: () {
+                    //print('tapped on the item $index');
+                    _navigateToModPlanPage(index, allPlans[index]);
+                  },
                   leading: const Icon(Icons.event),
                   title: Text(allPlans[index].name),
                   subtitle: Text(allPlans[index].description),
