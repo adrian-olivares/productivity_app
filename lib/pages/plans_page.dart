@@ -15,8 +15,16 @@ class PlansPage extends StatefulWidget {
 
 class _PlansPageState extends State<PlansPage> {
   List<Plan> allPlans = [
-    Plan(name: 'planX', description: 'plan X description', duration: 11),
-    Plan(name: 'planY', description: 'plan Y description', duration: 22)
+    Plan(
+        name: 'planX',
+        description: 'plan X description',
+        duration: 11,
+        difficulty: 11),
+    Plan(
+        name: 'planY',
+        description: 'plan Y description',
+        duration: 22,
+        difficulty: 22)
   ];
 
   @override
@@ -44,6 +52,7 @@ class _PlansPageState extends State<PlansPage> {
       print(newPlan.name);
       print(newPlan.description);
       print(newPlan.duration);
+      print(newPlan.difficulty);
     });
   }
 
@@ -60,6 +69,7 @@ class _PlansPageState extends State<PlansPage> {
       print(modedPlan.name);
       print(modedPlan.description);
       print(modedPlan.duration);
+      print(modedPlan.difficulty);
     });
   }
 
@@ -83,27 +93,32 @@ class _PlansPageState extends State<PlansPage> {
               'You are on the Plans Page!',
               style: TextStyle(fontSize: 24),
             ),
-            ListView.builder(
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(8),
-              itemCount: allPlans.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  onTap: () {
-                    //print('tapped on the item $index');
-                    _navigateToModPlanPage(index, allPlans[index]);
+            Expanded(
+              child: Scrollbar(
+                thumbVisibility: true,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.all(8),
+                  itemCount: allPlans.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      onTap: () {
+                        //print('tapped on the item $index');
+                        _navigateToModPlanPage(index, allPlans[index]);
+                      },
+                      leading: const Icon(Icons.event),
+                      title: Text(allPlans[index].name),
+                      subtitle: Text(allPlans[index].description),
+                      trailing: IconButton(
+                        onPressed: () {
+                          _deletePlan(index);
+                        },
+                        icon: const Icon(Icons.delete),
+                      ),
+                    );
                   },
-                  leading: const Icon(Icons.event),
-                  title: Text(allPlans[index].name),
-                  subtitle: Text(allPlans[index].description),
-                  trailing: IconButton(
-                    onPressed: () {
-                      _deletePlan(index);
-                    },
-                    icon: const Icon(Icons.delete),
-                  ),
-                );
-              },
+                ),
+              ),
             ),
           ],
         ),

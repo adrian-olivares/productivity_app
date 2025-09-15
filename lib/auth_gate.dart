@@ -4,7 +4,7 @@ import 'package:firebase_ui_oauth_google/firebase_ui_oauth_google.dart';
 import 'package:flutter/material.dart';
 
 import 'package:productivity_app/json_storage.dart';
-import 'counter_storage.dart';
+//import 'counter_storage.dart';
 import 'home_screen.dart';
 
 class AuthGate extends StatelessWidget {
@@ -63,7 +63,7 @@ class AuthGate extends StatelessWidget {
         }
 
         return HomeScreen(
-          storage: CounterStorage(),
+          //storage: CounterStorage(),
           jsonStorage: JsonStorage(),
         );
       },

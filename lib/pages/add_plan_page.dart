@@ -44,9 +44,20 @@ class CRUDForm extends StatefulWidget {
 class CRUDFormState extends State<CRUDForm> {
   final _formKey = GlobalKey<FormState>();
 
-  String _formTitle = '';
-  String _formDescription = '';
-  String _formDuration = '15min';
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _durationController = TextEditingController();
+  final TextEditingController _difficultyController = TextEditingController();
+
+  /*@override
+  void initState() {
+    super.initState();
+
+    _titleController.text = ;
+    _descriptionController.text = ;
+    _durationController.text = ;
+    _difficultyController.text = ;
+  }*/
 
   bool validateForm() {
     if (_formKey.currentState?.validate() ?? false) {
@@ -65,48 +76,28 @@ class CRUDFormState extends State<CRUDForm> {
           //crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextFormField(
+              controller: _titleController,
               maxLength: 50,
               decoration:
                   const InputDecoration(label: Text('Title of the plan')),
               // The validator receives the text that the user has entered.
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-              onSaved: (value) {
-                _formTitle = value!;
-              },
             ),
             TextFormField(
-              //maxLength: 50,
-              decoration: const InputDecoration(label: Text('Desciption')),
+              controller: _descriptionController,
+              decoration: const InputDecoration(label: Text('Description')),
               // The validator receives the text that the user has entered.
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter some text';
-                }
-                return null;
-              },
-              onSaved: (value) {
-                _formDescription = value!;
-              },
             ),
-            DropdownButtonFormField(
-              value: _formDuration,
+            TextFormField(
+              controller: _durationController,
+              decoration:
+                  const InputDecoration(label: Text('How many minutes?')),
+              // The validator receives the text that the user has entered.
+            ),
+            TextFormField(
+              controller: _difficultyController,
               decoration: const InputDecoration(
-                label: Text('Duration'),
-              ),
-              items: ['15min', '30min', '1hour']
-                  .map((option) => DropdownMenuItem(
-                        value: option,
-                        child: Text(option),
-                      ))
-                  .toList(),
-              onChanged: (value) {
-                _formDuration = value!;
-              },
+                  label: Text('Difficulty (from 1 to 5)')),
+              // The validator receives the text that the user has entered.
             ),
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
@@ -120,9 +111,10 @@ class CRUDFormState extends State<CRUDForm> {
                     Navigator.pop(
                       context,
                       Plan(
-                        name: _formTitle,
-                        description: _formDescription,
-                        //duration: _formDuration), TODO
+                        name: _titleController.text,
+                        description: _descriptionController.text,
+                        duration: int.parse(_durationController.text),
+                        difficulty: int.parse(_difficultyController.text),
                       ),
                     );
                   }

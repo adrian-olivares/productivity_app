@@ -17,7 +17,7 @@ class _ModPlanPageState extends State<ModPlanPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Mod Plan Page'),
+        title: const Text('Edit your plan here'),
       ),
       body: Center(
         child: Column(
@@ -49,7 +49,8 @@ class CRUDFormState extends State<CRUDForm> {
 
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  String _formDuration = '';
+  final TextEditingController _durationController = TextEditingController();
+  final TextEditingController _difficultyController = TextEditingController();
 
   @override
   void initState() {
@@ -57,6 +58,8 @@ class CRUDFormState extends State<CRUDForm> {
 
     _titleController.text = widget.plan.name;
     _descriptionController.text = widget.plan.description;
+    _durationController.text = widget.plan.duration.toString();
+    _difficultyController.text = widget.plan.difficulty.toString();
   }
 
   bool validateForm() {
@@ -121,6 +124,14 @@ class CRUDFormState extends State<CRUDForm> {
                 _formDuration = value!;
               },
             ),*/
+            TextFormField(
+              controller: _durationController,
+              decoration: const InputDecoration(label: Text('Duration')),
+            ),
+            TextFormField(
+              controller: _difficultyController,
+              decoration: const InputDecoration(label: Text('Difficulty')),
+            ),
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
             ),
@@ -135,7 +146,8 @@ class CRUDFormState extends State<CRUDForm> {
                     Plan(
                       name: _titleController.text.trim(),
                       description: _descriptionController.text.trim(),
-                      //duration: _formDuration), TODO
+                      duration: int.parse(_durationController.text),
+                      difficulty: int.parse(_difficultyController.text),
                     ),
                   );
                   //}
