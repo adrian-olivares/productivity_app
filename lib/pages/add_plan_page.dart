@@ -47,7 +47,8 @@ class CRUDFormState extends State<CRUDForm> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _durationController = TextEditingController();
-  final TextEditingController _difficultyController = TextEditingController();
+  //final TextEditingController _difficultyController = TextEditingController();
+  double _difficultyValue = 0;
 
   /*@override
   void initState() {
@@ -93,12 +94,59 @@ class CRUDFormState extends State<CRUDForm> {
                   const InputDecoration(label: Text('How many minutes?')),
               // The validator receives the text that the user has entered.
             ),
-            TextFormField(
-              controller: _difficultyController,
-              decoration: const InputDecoration(
-                  label: Text('Difficulty (from 1 to 5)')),
-              // The validator receives the text that the user has entered.
+            const SizedBox(height: 16),
+            const Text('Difficulty:'),
+            const SizedBox(height: 16),
+            /*LayoutBuilder(
+                builder: (BuildContext context, BoxConstraints constraints) {
+              double spacing = constraints.maxWidth / 4;
+              SizedBox(
+                width: spacing,
+                child: const Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Icon(Icons.mood),
+                      Icon(Icons.mood),
+                      Icon(Icons.mood),
+                      Icon(Icons.mood),
+                      Icon(Icons.mood),
+                    ],
+                  ),
+                ),
+              );
+            }),*/
+            Container(
+              padding: const EdgeInsets.only(left: 12, right: 12),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Icon(Icons.sentiment_very_dissatisfied),
+                  Icon(Icons.sentiment_dissatisfied),
+                  Icon(Icons.sentiment_neutral),
+                  Icon(Icons.sentiment_satisfied),
+                  Icon(Icons.sentiment_very_satisfied),
+                ],
+              ),
             ),
+            Slider(
+              value: _difficultyValue,
+              min: -2,
+              max: 2,
+              onChanged: (double newDifficultyValue) {
+                setState(() {
+                  _difficultyValue = newDifficultyValue;
+                });
+              },
+              divisions: 4,
+              //label: "$_difficultyValue",
+            ),
+
+            /*TextFormField(
+              controller: _difficultyController,
+              decoration: const InputDecoration(label: Text('Difficulty')),
+              // The validator receives the text that the user has entered.
+            ),*/
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
             ),
@@ -114,7 +162,8 @@ class CRUDFormState extends State<CRUDForm> {
                         name: _titleController.text,
                         description: _descriptionController.text,
                         duration: int.parse(_durationController.text),
-                        difficulty: int.parse(_difficultyController.text),
+                        difficulty: _difficultyValue.toInt(),
+                        //difficulty: int.parse(_difficultyController.text),
                       ),
                     );
                   }

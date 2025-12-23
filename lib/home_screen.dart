@@ -3,6 +3,7 @@
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:productivity_app/functions/filter_plans.dart';
 //import 'package:path_provider/path_provider.dart';
 //import 'package:productivity_app/counter_storage.dart';
 import 'package:productivity_app/json_storage.dart';
@@ -28,9 +29,9 @@ class _HomeScreenState extends State<HomeScreen> {
     description: 'Try meditating for 15 minutes',
     duration: 15,
   );*/
-  double _availTime = 60;
-  int intAvailTime = 60;
-  List<Plan> plans = [
+  double _availTime = 45;
+  int intAvailTime = 45;
+  List<Plan> plans2do = [
     Plan(
         name: 'planA',
         description: 'plan A description',
@@ -38,6 +39,18 @@ class _HomeScreenState extends State<HomeScreen> {
         difficulty: 1),
     Plan(
         name: 'planB',
+        description: 'plan B description',
+        duration: 2,
+        difficulty: 2)
+  ];
+  List<Plan> loadedPlans = [
+    Plan(
+        name: 'planAnotloaded',
+        description: 'plan A description',
+        duration: 1,
+        difficulty: 1),
+    Plan(
+        name: 'planBnotloaded',
         description: 'plan B description',
         duration: 2,
         difficulty: 2)
@@ -65,14 +78,16 @@ class _HomeScreenState extends State<HomeScreen> {
         //print(_plan.toJson());
       });
     });*/
-    _loadPlans();
+    _loadPlans2do();
     //widget.jsonStorage.writePlans(plans);
   }
 
-  void _loadPlans() async {
-    List<Plan> loadedPlans = await widget.jsonStorage.loadPlans();
+  void _loadPlans2do() async {
+    //TODO, change to load a list of the plans to do not all
+    loadedPlans = await widget.jsonStorage.loadPlans();
     setState(() {
-      plans = loadedPlans;
+      //plans2do = loadedPlans;
+      plans2do = filterPlans(loadedPlans, intAvailTime);
     });
   }
 
@@ -118,7 +133,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context) => PlansPage(
                             jsonStorage: JsonStorage(),
                           )),
-                ).then((value) => _loadPlans());
+                ).then((value) => _loadPlans2do());
               },
               icon: const Icon(Icons.calendar_month),
             )),
@@ -169,25 +184,25 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: ListView.builder(
                   shrinkWrap: true,
                   padding: const EdgeInsets.all(8),
-                  itemCount: plans.length,
+                  itemCount: plans2do.length,
                   itemBuilder: (BuildContext context, int index) {
                     return ListTile(
                         leading: const Icon(Icons.event),
-                        title: Text(plans[index].name),
-                        subtitle: Text(plans[index].description),
+                        title: Text(plans2do[index].name),
+                        subtitle: Text(plans2do[index].description),
                         trailing: SizedBox(
                             width: 70,
                             child: Row(
                               children: [
                                 SizedBox(
                                   width: 20,
-                                  child: Text("${plans[index].duration} '"),
+                                  child: Text("${plans2do[index].duration} '"),
                                 ),
                                 const SizedBox(width: 8),
                                 SizedBox(
                                   width: 40,
-                                  child:
-                                      Text("Dif: ${plans[index].difficulty}"),
+                                  child: Text(
+                                      "Dif: ${plans2do[index].difficulty}"),
                                 ),
                               ],
                             )));
@@ -226,6 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         setState(() {
                           _availTime = newAvailTime;
                           intAvailTime = _availTime.toInt();
+                          plans2do = filterPlans(loadedPlans, intAvailTime);
                         });
                       },
                       divisions: 15,

@@ -84,7 +84,7 @@ class _PlansPageState extends State<PlansPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Plans Available'),
+        title: const Text('Tasks Available'),
       ),
       body: Center(
         child: Column(
@@ -106,7 +106,11 @@ class _PlansPageState extends State<PlansPage> {
                         //print('tapped on the item $index');
                         _navigateToModPlanPage(index, allPlans[index]);
                       },
-                      leading: const Icon(Icons.event),
+                      //leading: const Icon(Icons.event),
+                      leading: CircleAvatar(
+                        backgroundColor: Colors.lightBlue,
+                        child: Text(allPlans[index].duration.toString()),
+                      ),
                       title: Text(allPlans[index].name),
                       subtitle: Text(allPlans[index].description),
                       trailing: IconButton(

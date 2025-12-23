@@ -51,6 +51,7 @@ class CRUDFormState extends State<CRUDForm> {
   final TextEditingController _descriptionController = TextEditingController();
   final TextEditingController _durationController = TextEditingController();
   final TextEditingController _difficultyController = TextEditingController();
+  late double _difficultyValue;
 
   @override
   void initState() {
@@ -60,6 +61,7 @@ class CRUDFormState extends State<CRUDForm> {
     _descriptionController.text = widget.plan.description;
     _durationController.text = widget.plan.duration.toString();
     _difficultyController.text = widget.plan.difficulty.toString();
+    _difficultyValue = widget.plan.difficulty.toDouble();
   }
 
   bool validateForm() {
@@ -128,9 +130,37 @@ class CRUDFormState extends State<CRUDForm> {
               controller: _durationController,
               decoration: const InputDecoration(label: Text('Duration')),
             ),
-            TextFormField(
+            /*TextFormField(
               controller: _difficultyController,
               decoration: const InputDecoration(label: Text('Difficulty')),
+            ),*/
+            const SizedBox(height: 16),
+            const Text('Difficulty:'),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.only(left: 12, right: 12),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Icon(Icons.sentiment_very_dissatisfied),
+                  Icon(Icons.sentiment_dissatisfied),
+                  Icon(Icons.sentiment_neutral),
+                  Icon(Icons.sentiment_satisfied),
+                  Icon(Icons.sentiment_very_satisfied),
+                ],
+              ),
+            ),
+            Slider(
+              value: _difficultyValue.toDouble(),
+              min: -2,
+              max: 2,
+              onChanged: (double newDifficultyValue) {
+                setState(() {
+                  _difficultyValue = newDifficultyValue;
+                });
+              },
+              divisions: 4,
+              //label: "$_difficultyValue",
             ),
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 16),
@@ -147,7 +177,8 @@ class CRUDFormState extends State<CRUDForm> {
                       name: _titleController.text.trim(),
                       description: _descriptionController.text.trim(),
                       duration: int.parse(_durationController.text),
-                      difficulty: int.parse(_difficultyController.text),
+                      //difficulty: int.parse(_difficultyController.text),
+                      difficulty: _difficultyValue.toInt(),
                     ),
                   );
                   //}
